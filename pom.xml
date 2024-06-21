@@ -14,7 +14,7 @@
     <name>student-events-api</name>
     <description>student-events-api</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>18</java.version>
     </properties>
     <dependencies>
         <dependency>
