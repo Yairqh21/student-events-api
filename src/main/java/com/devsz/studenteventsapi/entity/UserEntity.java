@@ -16,7 +16,7 @@ public class UserEntity {
     //otros datos
     private String fullName;
     private String numberPhone;
-    private String carrer;
+    private String career;
     private String academicCycle;
     private String userImg;
 

@@ -25,28 +25,6 @@ public class UserServiceImpl implements IUserService {
     // @Autowired
     private final FirebaseInitializer firebase;
 
-
-    /* iniciar sesion 
-
-    public UserEntity singIn(UserEntity userEntity) throws Exception {
-
-        return firebase.getFirebaseAuth().singInWithEmailAndPassword(userEntity.getEmail(), userEntity.getPassword());
-    }
-
-    public UserEntity singUp(UserEntity userEntity) throws Exception {
-        return firebase.getFirebaseAuth().createUserWithEmailAndPassword(userEntity.getEmail(), userEntity.getPassword());
-    }
-
-
-    public UserEntity singOut() throws Exception {
-        return firebase.getFirebaseAuth().signOut();
-    }
-
-    private updateUser(String displayName) throws Exception {
-        return updateProfile(getAuth().concurrentUser, displayName);
-        
-    }*/
-
     @Override
     public UserEntity save(UserEntity userEntity) throws Exception {
         Map<String, Object> Data = getDocData(userEntity);
@@ -137,7 +115,7 @@ public UserEntity update(UserEntity userEntity, String id) throws Exception {
         //otros datos
         Data.put("fullName",userEntity.getFullName());
         Data.put("numberPhone",userEntity.getNumberPhone());
-        Data.put("carrer",userEntity.getCarrer());
+        Data.put("career",userEntity.getCareer());
         Data.put("academicCycle",userEntity.getAcademicCycle());
         Data.put("userImg",userEntity.getUserImg());
         return Data;

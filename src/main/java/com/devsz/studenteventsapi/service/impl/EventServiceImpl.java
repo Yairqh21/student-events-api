@@ -108,6 +108,7 @@ public class EventServiceImpl implements IEventService {
         Data.put("eventType", eventEntity.getEventType());
         Data.put("modality", eventEntity.getModality());
         Data.put("ubication", eventEntity.getUbication());
+        Data.put("forStudentsOf", eventEntity.getForStudentsOf());
         Data.put("urlEventPhoto", eventEntity.getUrlEventPhoto());
         return Data;
     }

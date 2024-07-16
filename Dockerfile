@@ -1,13 +1,14 @@
-# Stage 1: Build the application
-FROM maven:4.0.0-openjdk-18-slim AS build
-WORKDIR /app
-COPY pom.xml . 
-COPY src ./src
-RUN mvn clean install
+# Usar la imagen oficial de OpenJDK 18 como base
+FROM openjdk:18-jdk-slim
 
-# Stage 2: Run the application
-FROM openjdk:18-jdk-alpine
+# Establecer el directorio de trabajo en /app
 WORKDIR /app
-COPY --from=build /app/target/student-events-api-0.0.1-SNAPSHOT.jar ./app-UniEventos.jar
+
+# Copiar el archivo JAR del proyecto al contenedor
+COPY target/student-events-api-0.0.1-SNAPSHOT.jar app.jar
+
+# Exponer el puerto en el que la aplicación está corriendo
 EXPOSE 8080
-CMD ["java", "-jar", "app-UniEventos.jar"]
+
+# Ejecutar la aplicación
+ENTRYPOINT ["java", "-jar", "app.jar"]

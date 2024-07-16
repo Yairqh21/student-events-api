@@ -105,7 +105,8 @@ public class AssistanceServiceImpl implements IAssistanceService {
         //Data.put("id", eventEntity.getId());
         Data.put("studentName", assistanceEntity.getStudentName());
         Data.put("eventName", assistanceEntity.getEventName());
-        Data.put("attented", assistanceEntity.getAttented());
+        Data.put("attended", assistanceEntity.getAttended());
+        Data.put("registrationDate", assistanceEntity.getRegistrationDate());
         return Data;
     }
 }

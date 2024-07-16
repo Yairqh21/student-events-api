@@ -12,6 +12,7 @@ public class AssistanceEntity {
     private String id;
     private String studentName;
     private String eventName;
-    private Boolean attented;
+    private Boolean attended;
+    private String registrationDate;
 
 }
