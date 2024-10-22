@@ -22,7 +22,7 @@ public class FirebaseInitializer {
                 throw new FileNotFoundException("File not found: private_key_firebase.json");
             }
 
-            FirebaseOptions options = new FirebaseOptions.Builder()
+            FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setDatabaseUrl("https://events-b4221.firebaseio.com")
                     .build();
