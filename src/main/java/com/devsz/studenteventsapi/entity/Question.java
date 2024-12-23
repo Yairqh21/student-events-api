@@ -1,21 +1,18 @@
 package com.devsz.studenteventsapi.entity;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerEntity {
+public class Question{
 
      private String id;
-     private String surveyId;
-     private String eventId;
-     private String userId;
-     private List<AnswerQuestionEntity> answers;
-
+     private String questionText;
+     private String questionType;
+     private List<String> options;
 }
-
-

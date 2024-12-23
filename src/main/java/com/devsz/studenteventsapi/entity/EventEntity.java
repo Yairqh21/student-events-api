@@ -1,25 +1,30 @@
 package com.devsz.studenteventsapi.entity;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventEntity {
+@EqualsAndHashCode(callSuper=true)
+public class EventEntity  extends BaseEntity{
 
-    private String id;
+    private String createdByUser;
     private String eventType;
-    private String modality;
-    private String urlEventPhoto;
+    private String eventModality;
+    private String linkUrl;
+    private String imgUrl;
     private String eventName;
+    private String description;
     private String eventDateTime;
-    private String ubication;
-    private String forStudentsOf;
-    //private List<Map<String, String>> forStudentsOf; 
+    private String location;
+    private List<String > targetAudience;
+    private Boolean status;
+    private String cancellationReason;
+    private String sponsor;
 
 }

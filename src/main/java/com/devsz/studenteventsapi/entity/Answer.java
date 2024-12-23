@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerQuestionEntity {
+public class Answer  {
 
      private String questionId;
-     private String answer;
+     private String answerText;
 
 }
+
+
