@@ -1,16 +1,19 @@
 package com.devsz.studenteventsapi.service;
 
+import com.devsz.studenteventsapi.dto.PathRequest;
+
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface ICRUD<T, ID> {
 
-    T save(T t) throws Exception;
+    T save(PathRequest pathRequest, T data) throws ExecutionException, InterruptedException;
 
-    T update(T t, ID id) throws Exception;
+    T update(PathRequest pathRequest, ID id, T data) throws ExecutionException, InterruptedException, IllegalAccessException;
 
-    List<T> readAll() throws Exception;
+    List<T> readAll(PathRequest pathRequest) throws ExecutionException, InterruptedException;
 
-    T readById(ID id) throws Exception;
+    T readById(PathRequest pathRequest, ID id) throws ExecutionException, InterruptedException;
 
-    void delete(ID id) throws Exception;
+    void delete(PathRequest pathRequest, ID id) throws ExecutionException, InterruptedException;
 }
