@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=true)
 public class UserEntity extends BaseEntity {
-
+    
+    private String id;
     private String username;
     private String password;
     private String email;
@@ -20,7 +21,7 @@ public class UserEntity extends BaseEntity {
     private String career;
     private String academicCycle;
     private String imgUrl;
-    private Boolean isAdmin;
+    private String role;
     private Boolean isActive;
 
 }

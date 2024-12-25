@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=true)
 public class EventEntity  extends BaseEntity{
 
-    private String createdByUser;
+    private String userCreatedId;
     private String eventType;
     private String eventModality;
     private String linkUrl;

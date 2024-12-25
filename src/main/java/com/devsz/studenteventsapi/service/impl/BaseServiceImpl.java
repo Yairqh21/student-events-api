@@ -1,6 +1,6 @@
 package com.devsz.studenteventsapi.service.impl;
 
-import com.devsz.studenteventsapi.Utils.FirestoreUtils;
+import com.devsz.studenteventsapi.Utils.FirebaseUtils;
 import com.devsz.studenteventsapi.dto.PathRequest;
 import com.devsz.studenteventsapi.entity.BaseEntity;
 import com.devsz.studenteventsapi.firebase.FirebaseInitializer;
@@ -25,26 +25,43 @@ public abstract class BaseServiceImpl<T, ID> implements ICRUD<T, ID> {
 
     @Override
     public void delete(PathRequest pathRequest, ID id) throws ExecutionException, InterruptedException {
-        FirestoreUtils
+        FirebaseUtils
                 .getCollectionReference(fireInit, pathRequest.pathSegments()).document(id.toString()).delete().get();
     }
 
     @Override
-    public List<T> readAll(PathRequest pathRequest) throws ExecutionException, InterruptedException {
-        List<T> result = new ArrayList<>();
-        ApiFuture<QuerySnapshot> query = FirestoreUtils
-                .getCollectionReference(fireInit, pathRequest.pathSegments()).get();
-        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
-        for (QueryDocumentSnapshot doc : documents) {
-            T object = doc.toObject(getEntityClass());
-            result.add(object);
-        }
-        return result;
+    public List<T> readAll(PathRequest pathRequest) throws ExecutionException,
+    InterruptedException {
+    List<T> result = new ArrayList<>();
+    ApiFuture<QuerySnapshot> query = FirebaseUtils
+    .getCollectionReference(fireInit, pathRequest.pathSegments()).get();
+    List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+    for (QueryDocumentSnapshot doc : documents) {
+    T object = doc.toObject(getEntityClass());
+    result.add(object);
     }
+    return result;
+    }
+
+    // @Override
+    // public List<T> readAll(PathRequest pathRequest, ID userId, String field)
+    //         throws ExecutionException, InterruptedException {
+    //     List<T> result = new ArrayList<>();
+    //     ApiFuture<QuerySnapshot> query = FirebaseUtils.getCollectionReference(fireInit, pathRequest.pathSegments())
+    //             .whereEqualTo(field, userId.toString())
+    //             // Filtrar por el ID del creador
+    //             .get();
+    //     List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+    //     for (QueryDocumentSnapshot doc : documents) {
+    //         T event = doc.toObject(getEntityClass());
+    //         result.add(event);
+    //     }
+    //     return result;
+    // }
 
     @Override
     public T readById(PathRequest pathRequest, ID id) throws ExecutionException, InterruptedException {
-        DocumentReference ref = FirestoreUtils
+        DocumentReference ref = FirebaseUtils
                 .getCollectionReference(fireInit, pathRequest.pathSegments()).document(id.toString());
         ApiFuture<DocumentSnapshot> futureDoc = ref.get();
         DocumentSnapshot document = futureDoc.get();
@@ -57,7 +74,7 @@ public abstract class BaseServiceImpl<T, ID> implements ICRUD<T, ID> {
 
     @Override
     public T save(PathRequest pathRequest, T data) throws ExecutionException, InterruptedException {
-        ApiFuture<DocumentReference> documentReferenceApiFuture = FirestoreUtils
+        ApiFuture<DocumentReference> documentReferenceApiFuture = FirebaseUtils
                 .getCollectionReference(fireInit, pathRequest.pathSegments())
                 .add(data);
 
@@ -77,7 +94,7 @@ public abstract class BaseServiceImpl<T, ID> implements ICRUD<T, ID> {
         Map<String, Object> updates = filterNullFields(data);
 
         if (!updates.isEmpty()) {
-            ApiFuture<WriteResult> writeResultApiFuture = FirestoreUtils
+            ApiFuture<WriteResult> writeResultApiFuture = FirebaseUtils
                     .getCollectionReference(fireInit, pathRequest.pathSegments())
                     .document(id.toString()).update(updates);
 

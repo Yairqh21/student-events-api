@@ -15,7 +15,7 @@ public class SurveyEntity extends BaseEntity {
 
     private String title;
     private Boolean isActive; 
-    private String organizedId;
+    private String userId;
     private String eventId;
     private List<Question> questions;
 

@@ -1,5 +1,6 @@
 package com.devsz.studenteventsapi.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.devsz.studenteventsapi.Utils.FirebaseUtils;
 import com.devsz.studenteventsapi.dto.DataRequest;
 import com.devsz.studenteventsapi.dto.PathRequest;
 import com.devsz.studenteventsapi.entity.ResponsesEntity;
@@ -28,16 +30,25 @@ public class ResponseController {
     private final IResponseService service;
 
     @PostMapping
-    public ResponseEntity<ResponsesEntity> create(@Valid @RequestBody DataRequest<ResponsesEntity> data)
+    public ResponseEntity<ResponsesEntity> create(@Valid @RequestBody DataRequest<ResponsesEntity> data,
+            Principal principal)
             throws Exception {
-        return new ResponseEntity<>(service.save(data.path(), data.entity()), HttpStatus.CREATED);
+        if (FirebaseUtils.checkOwnership(data.entity().getUserId(), principal.getName())) {
+            return new ResponseEntity<>(service.save(data.path(), data.entity()), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponsesEntity> update(
             @PathVariable String id,
-            @Valid @RequestBody DataRequest<ResponsesEntity> data) throws Exception {
-        return new ResponseEntity<>(service.update(data.path(), id, data.entity()), HttpStatus.OK);
+            @Valid @RequestBody DataRequest<ResponsesEntity> data, Principal principal) throws Exception {
+        if (FirebaseUtils.checkOwnership(data.entity().getUserId(), principal.getName())) {
+            return new ResponseEntity<>(service.update(data.path(), id, data.entity()), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
     }
 
     @GetMapping

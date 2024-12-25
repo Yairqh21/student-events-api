@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/event-participation")
 @RequiredArgsConstructor
+//@PreAuthorize("hasRole('STUDENT')")
 public class EventParticipationController {
 
     private final IEventParticipationService service;

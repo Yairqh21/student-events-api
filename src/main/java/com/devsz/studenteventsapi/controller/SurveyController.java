@@ -1,5 +1,6 @@
 package com.devsz.studenteventsapi.controller;
 
+import com.devsz.studenteventsapi.Utils.FirebaseUtils;
 import com.devsz.studenteventsapi.dto.DataRequest;
 import com.devsz.studenteventsapi.dto.PathRequest;
 import com.devsz.studenteventsapi.entity.SurveyEntity;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,15 +21,27 @@ public class SurveyController {
     private final ISurveyService service;
 
     @PostMapping
-    public ResponseEntity<SurveyEntity> create(@RequestBody DataRequest<SurveyEntity> data) throws Exception {
-        return new ResponseEntity<>(service.save(data.path(), data.entity()), HttpStatus.CREATED);
+    public ResponseEntity<SurveyEntity> create(@RequestBody DataRequest<SurveyEntity> data, Principal principal)
+            throws Exception {
+
+        if (FirebaseUtils.checkOwnership(data.entity().getUserId(), principal.getName())) {
+            return new ResponseEntity<>(service.save(data.path(), data.entity()), HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SurveyEntity> update(
             @PathVariable String id,
-            @RequestBody DataRequest<SurveyEntity> data) throws Exception {
-        return new ResponseEntity<>(service.update(data.path(), id, data.entity()), HttpStatus.OK);
+            @RequestBody DataRequest<SurveyEntity> data, Principal principal) throws Exception {
+
+        if (FirebaseUtils.checkOwnership(data.entity().getUserId(), principal.getName())) {
+            return new ResponseEntity<>(service.update(data.path(), id, data.entity()), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        
     }
 
     @GetMapping

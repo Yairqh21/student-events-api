@@ -17,14 +17,14 @@ public class FirebaseInitializer {
 
     @PostConstruct
     public void initFirestore() {
-        try (InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("private_key_firebase.json")) {
+        try (InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase.json")) {
             if (serviceAccount == null) {
                 throw new FileNotFoundException("File not found: private_key_firebase.json");
             }
 
-            FirebaseOptions options = new FirebaseOptions.Builder()
+            FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setDatabaseUrl("https://events-b4221.firebaseio.com")
+                    .setDatabaseUrl("https://appeventos-6bbfc.firebaseio.com")
                     .build();
 
             FirebaseApp.initializeApp(options);
