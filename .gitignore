@@ -1,10 +1,33 @@
+# Archivos de ayuda
 HELP.md
-##target/
+
+# Maven
+target/
+!target/student-events-api-0.0.1-SNAPSHOT.jar
 !.mvn/wrapper/maven-wrapper.jar
+
+# Excluir pero permitir ciertos targets
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# Excluir ciertos builds
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Configuración de entornos o secretos
+src/main/resources/application.dev.properties
+src/main/resources/events-b4221-9dfaaed3fc17.json
+src/test/java/com/devsz/studenteventsapi/StudentEventsApiApplicationTests.private.java
+
+# Firebase config
+firebase.json
+
+##########################
+# IDEs y herramientas
+##########################
+
+### STS (Spring Tool Suite)
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +36,18 @@ HELP.md
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+### IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+### NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+### Visual Studio Code
 .vscode/
