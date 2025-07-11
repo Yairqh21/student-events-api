@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.devsz.studenteventsapi.Utils.FirebaseUtils;
 import com.devsz.studenteventsapi.dto.DataRequest;
 import com.devsz.studenteventsapi.dto.PathRequest;
-import com.devsz.studenteventsapi.entity.ResponsesEntity;
+import com.devsz.studenteventsapi.entity.AnswerEntity;
 import com.devsz.studenteventsapi.service.IResponseService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/response")
+@RequestMapping("/api/survey-response")
 @RequiredArgsConstructor
 public class ResponseController {
     private final IResponseService service;
 
     @PostMapping
-    public ResponseEntity<ResponsesEntity> create(@Valid @RequestBody DataRequest<ResponsesEntity> data,
+    public ResponseEntity<AnswerEntity> create(@Valid @RequestBody DataRequest<AnswerEntity> data,
             Principal principal)
             throws Exception {
         if (FirebaseUtils.checkOwnership(data.entity().getUserId(), principal.getName())) {
@@ -41,9 +41,9 @@ public class ResponseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponsesEntity> update(
+    public ResponseEntity<AnswerEntity> update(
             @PathVariable String id,
-            @Valid @RequestBody DataRequest<ResponsesEntity> data, Principal principal) throws Exception {
+            @Valid @RequestBody DataRequest<AnswerEntity> data, Principal principal) throws Exception {
         if (FirebaseUtils.checkOwnership(data.entity().getUserId(), principal.getName())) {
             return new ResponseEntity<>(service.update(data.path(), id, data.entity()), HttpStatus.OK);
         }
@@ -52,13 +52,13 @@ public class ResponseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponsesEntity>> readAll(
+    public ResponseEntity<List<AnswerEntity>> readAll(
             @Valid @RequestBody PathRequest pathRequest) throws Exception {
         return new ResponseEntity<>(service.readAll(pathRequest), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponsesEntity> readById(
+    public ResponseEntity<AnswerEntity> readById(
             @PathVariable String id,
             @Valid @RequestBody PathRequest pathRequest) throws Exception {
         return new ResponseEntity<>(service.readById(pathRequest, id), HttpStatus.OK);

@@ -60,7 +60,7 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (FirebaseAuthException e) {
-            logger.error("Invalid Firebase ID token", e);
+            //logger.error("Invalid Firebase ID token", e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"message\":\"Invalid Firebase ID token\"}");
             return;

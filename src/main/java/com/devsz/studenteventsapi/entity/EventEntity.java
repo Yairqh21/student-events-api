@@ -23,7 +23,7 @@ public class EventEntity  extends BaseEntity{
     private String eventDateTime;
     private String location;
     private List<String > targetAudience;
-    private Boolean status;
+    private String status;
     private String cancellationReason;
     private String sponsor;
 

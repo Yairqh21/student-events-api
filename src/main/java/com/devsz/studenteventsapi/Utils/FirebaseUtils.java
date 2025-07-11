@@ -8,7 +8,6 @@ import java.util.Map;
 import com.devsz.studenteventsapi.dto.UserRequest;
 import com.devsz.studenteventsapi.firebase.FirebaseInitializer;
 import com.google.cloud.firestore.CollectionReference;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 
@@ -46,14 +45,5 @@ public class FirebaseUtils {
     public static boolean checkOwnership(String dataId, String ownerId) {
         return dataId.equals(ownerId);
     } 
-
-    public static String generateEmailVerificationLink(String email) throws FirebaseAuthException {
-        ActionCodeSettings actionCodeSettings = ActionCodeSettings.builder()
-                .setUrl("https://www.tu-dominio.com/confirmar-email")
-                .setHandleCodeInApp(true)
-                .setAndroidPackageName("com.UniEventos.android")
-                .setIosBundleId("com.UniEventos.ios").build();
-        return FirebaseAuth.getInstance().generateEmailVerificationLink(email, actionCodeSettings);
-    }
 
 }

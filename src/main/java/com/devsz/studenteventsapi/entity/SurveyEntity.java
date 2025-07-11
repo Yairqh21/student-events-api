@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class SurveyEntity extends BaseEntity {
 
     private String title;
+    private String description;
     private Boolean isActive; 
     private String userId;
     private String eventId;

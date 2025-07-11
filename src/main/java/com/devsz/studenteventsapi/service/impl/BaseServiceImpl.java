@@ -10,6 +10,7 @@ import com.google.cloud.firestore.*;
 import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,35 +30,75 @@ public abstract class BaseServiceImpl<T, ID> implements ICRUD<T, ID> {
                 .getCollectionReference(fireInit, pathRequest.pathSegments()).document(id.toString()).delete().get();
     }
 
+    // trae todo sin filtro
     @Override
     public List<T> readAll(PathRequest pathRequest) throws ExecutionException,
-    InterruptedException {
-    List<T> result = new ArrayList<>();
-    ApiFuture<QuerySnapshot> query = FirebaseUtils
-    .getCollectionReference(fireInit, pathRequest.pathSegments()).get();
-    List<QueryDocumentSnapshot> documents = query.get().getDocuments();
-    for (QueryDocumentSnapshot doc : documents) {
-    T object = doc.toObject(getEntityClass());
-    result.add(object);
-    }
-    return result;
+            InterruptedException {
+        List<T> result = new ArrayList<>();
+        ApiFuture<QuerySnapshot> query = FirebaseUtils
+                .getCollectionReference(fireInit, pathRequest.pathSegments()).get();
+        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+        for (QueryDocumentSnapshot doc : documents) {
+            T object = doc.toObject(getEntityClass());
+            result.add(object);
+        }
+        return result;
     }
 
-    // @Override
-    // public List<T> readAll(PathRequest pathRequest, ID userId, String field)
-    //         throws ExecutionException, InterruptedException {
-    //     List<T> result = new ArrayList<>();
-    //     ApiFuture<QuerySnapshot> query = FirebaseUtils.getCollectionReference(fireInit, pathRequest.pathSegments())
-    //             .whereEqualTo(field, userId.toString())
-    //             // Filtrar por el ID del creador
-    //             .get();
-    //     List<QueryDocumentSnapshot> documents = query.get().getDocuments();
-    //     for (QueryDocumentSnapshot doc : documents) {
-    //         T event = doc.toObject(getEntityClass());
-    //         result.add(event);
-    //     }
-    //     return result;
-    // }
+    public List<T> readAllPaginated(PathRequest pathRequest, int limit, Timestamp startAfterCreatedAt)
+            throws ExecutionException, InterruptedException {
+
+        List<T> result = new ArrayList<>();
+        CollectionReference collection = FirebaseUtils
+                .getCollectionReference(fireInit, pathRequest.pathSegments());
+
+        Query query = collection.orderBy("createdAt").limit(limit);
+
+        if (startAfterCreatedAt != null) {
+            query = query.startAfter(startAfterCreatedAt);
+        }
+
+        ApiFuture<QuerySnapshot> future = query.get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+
+        for (QueryDocumentSnapshot doc : documents) {
+            T object = doc.toObject(getEntityClass());
+            result.add(object);
+        }
+
+        return result;
+    }
+
+    // para cargar todo de un usuario
+    public List<T> readAllOfUserCreated(PathRequest pathRequest, String userId, String field, int limit,
+            Timestamp startAfterCreatedAt)
+            throws ExecutionException, InterruptedException {
+
+        // Referencia base a la colección
+        CollectionReference collectionRef = FirebaseUtils.getCollectionReference(fireInit, pathRequest.pathSegments());
+
+        // Construimos la consulta con filtros
+        Query query = collectionRef
+                .whereEqualTo(field, userId)
+                .orderBy("createdAt")
+                .limit(limit);
+
+        if (startAfterCreatedAt != null) {
+            query = query.startAfter(startAfterCreatedAt);
+        }
+
+        // Ejecutamos la consulta
+        ApiFuture<QuerySnapshot> future = query.get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+
+        List<T> result = new ArrayList<>();
+        for (QueryDocumentSnapshot doc : documents) {
+            T object = doc.toObject(getEntityClass());
+            result.add(object);
+        }
+
+        return result;
+    }
 
     @Override
     public T readById(PathRequest pathRequest, ID id) throws ExecutionException, InterruptedException {

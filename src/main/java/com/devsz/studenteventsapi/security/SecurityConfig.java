@@ -2,7 +2,6 @@ package com.devsz.studenteventsapi.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,9 +27,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
-                        .requestMatchers("/api/events/**").hasAnyRole("ADMIN", "DEV")
-                        .requestMatchers("/api/surveys/**").hasAnyRole("ADMIN", "DEV")
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/events/**").hasAnyRole("ADMIN", "DEV", "STUDENT")
+                        //.requestMatchers("/api/surveys/**").hasAnyRole("ADMIN", "DEV")
                         .requestMatchers("/api/responses/**").hasAnyRole("STUDENT", "DEV")
                         .requestMatchers("/api/event-participation/**").hasAnyRole("STUDENT", "DEV")
                         .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "DEV", "STUDENT").anyRequest()

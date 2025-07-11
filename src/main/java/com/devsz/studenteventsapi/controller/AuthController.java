@@ -11,7 +11,7 @@ import com.devsz.studenteventsapi.dto.UserRequest;
 import com.devsz.studenteventsapi.dto.UserResponse;
 import com.devsz.studenteventsapi.service.IUserService;
 import com.devsz.studenteventsapi.service.impl.FirebaseAuthServiceImpl;
-import com.google.cloud.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 
 @RestController
@@ -28,11 +28,10 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody UserRequest userDTO) throws Exception {
         try {
             UserResponse userResponse = firebaseAuthService.registerUserAuth(userDTO);
-
-            boolean isUserSaved = saveUserInFirestore(userDTO, userResponse);
+            boolean isUserSaved = saveUserInFirestore(userResponse);
             // si Firestore falla
             if (!isUserSaved) {
-                firebaseAuthService.deleteUser(userResponse.id());
+                firebaseAuthService.deleteUser(userResponse.user().getId());
                 return ResponseEntity.status(500).body(
                         Map.of("error", "User registration failed"));
             }
@@ -44,24 +43,35 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/email-exists")
+    @PostMapping("/check-account")
     public ResponseEntity<Boolean> checkEmailExists(@RequestBody EmailRequest emailRequest) {
         try {
-            return ResponseEntity.ok(firebaseAuthService.checkUserByEmail(emailRequest.email()));
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(false);
+            boolean exists = firebaseAuthService.checkUserByEmail(emailRequest.email());
+            return ResponseEntity.ok(exists);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(false);
         }
     }
 
-    private boolean saveUserInFirestore(UserRequest userDTO, UserResponse userResponse) throws Exception {
-        UserRequest updatedUserDTO = UserRequest.builder()
-                .id(userResponse.id())
-                .email(userDTO.getEmail())
-                .username(userDTO.getUsername())
-                .role(userDTO.getRole())
-                .createdAt(Timestamp.ofTimeSecondsAndNanos(userResponse.createdAt() / 1000, 0))
-                .build();
+    @GetMapping("/check-token")
+    public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        try {
+            FirebaseAuth.getInstance().verifyIdToken(token);
+            return ResponseEntity.ok().build();
+        } catch (FirebaseAuthException e) {
+            return ResponseEntity.status(401).build();
+        }
+    }
 
+    private boolean saveUserInFirestore(UserResponse userResponse) throws Exception {
+        UserRequest updatedUserDTO = UserRequest.builder()
+                .id(userResponse.user().getId())
+                .email(userResponse.user().getEmail())
+                .username(userResponse.user().getUsername())
+                .role(userResponse.user().getRole())
+                .createdAt(userResponse.user().getCreatedAt())
+                .build();
         return userService.registerUser(updatedUserDTO);
     }
 }

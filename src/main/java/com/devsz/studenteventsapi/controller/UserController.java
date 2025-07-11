@@ -19,47 +19,59 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN') or hasRole('STUDENT') or hasRole('DEV')")
+// @PreAuthorize("hasRole('ADMIN') or hasRole('STUDENT') or hasRole('DEV')")
 public class UserController {
 
     private final IUserService service;
 
-    @PutMapping("/{id}s")
+    @PutMapping("/me")
     public ResponseEntity<UserEntity> update(
-            @PathVariable String id,
             @Valid @RequestBody DataRequest<UserEntity> data, Principal principal) throws Exception {
 
-        if (FirebaseUtils.checkOwnership(id, principal.getName())) {
-            return new ResponseEntity<>(service.update(data.path(), id, data.entity()), HttpStatus.OK);
+        if (principal == null || principal.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-
+        return new ResponseEntity<>(service.update(data.path(), principal.getName(), data.entity()), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> readAll(
-            @RequestBody PathRequest pathRequest) throws Exception {
+            @RequestParam("pathSegments") List<String> pathSegments) throws Exception {
+        PathRequest pathRequest = new PathRequest(pathSegments.toArray(new String[0]));
         return new ResponseEntity<>(service.readAll(pathRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserEntity> readUserInfo(
+            @RequestParam("pathSegments") List<String> pathSegments,
+            Principal principal) throws Exception {
+
+        if (principal == null || principal.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        PathRequest pathRequest = new PathRequest(pathSegments.toArray(new String[0]));
+        return new ResponseEntity<>(service.readById(pathRequest, principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserEntity> readById(
-            @PathVariable String id,
-            @RequestBody PathRequest pathRequest, Principal principal) throws Exception {
-        if (FirebaseUtils.checkOwnership(id, principal.getName())) {
-            return new ResponseEntity<>(service.readById(pathRequest, id), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            @RequestParam("pathSegments") List<String> pathSegments, @PathVariable String id) throws Exception {
+
+        PathRequest pathRequest = new PathRequest(pathSegments.toArray(new String[0]));
+        return new ResponseEntity<>(service.readById(pathRequest, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable String id,
-            @Valid @RequestBody PathRequest pathRequest, Principal principal) throws Exception {
-        if (FirebaseUtils.checkOwnership(id, principal.getName())) {
-            service.delete(pathRequest, id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            @RequestParam("pathSegments") List<String> pathSegments, Principal principal) throws Exception {
+
+        if (principal == null || principal.getName() == null ||
+                !FirebaseUtils.checkOwnership(id, principal.getName())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        PathRequest pathRequest = new PathRequest(pathSegments.toArray(new String[0]));
+        service.delete(pathRequest, id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

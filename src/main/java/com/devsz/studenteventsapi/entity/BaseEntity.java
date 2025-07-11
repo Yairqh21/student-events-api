@@ -15,7 +15,7 @@ public abstract class BaseEntity {
     private String id;
 
     @ServerTimestamp
-    @JsonIgnore
+    //@JsonIgnore
     private Timestamp createdAt; 
 
     @JsonIgnore
